@@ -59,8 +59,8 @@ training:
   optimizer: "adam"
   loss_function: "mse"
   validation_split: 0.2
-  early_stopping_patience: 5
-  early_stopping_min_delta: 0.0001
+  early_stopping_patience: 3  # Reduced from 5 - stop sooner when barely improving
+  early_stopping_min_delta: 0.001  # Increased from 0.0001 - require meaningful improvement
   early_stopping_monitor: "val_loss"
   scheduler: "reduce_on_plateau"
   momentum: 0.9
