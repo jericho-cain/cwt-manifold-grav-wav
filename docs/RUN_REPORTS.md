@@ -149,15 +149,24 @@ This document tracks all training runs, their configurations, results, and findi
 2. Simple confusion model (uniform 1000 sources) - real LISA will have non-uniform distribution
 3. CPU-only training - GPU could enable larger models and batch sizes
 4. Single-channel (TDI-A) - multi-channel (A, E, T) could provide more information
+5. **⚠️ CRITICAL: Sub-optimal CWT parameters** - We blindly copied LIGO parameters without adapting:
+   - LISA has only 6.4 scales/octave vs LIGO's 13.7 scales/octave (UNDER-resolving in frequency!)
+   - Should use ~140 n_scales (instead of 64) to match LIGO's frequency resolution
+   - Aspect ratio changed from 512:1 (LIGO) to 56:1 (LISA), changing CNN inductive bias
+   - See `scripts/analysis/analyze_cwt_params.py` for full analysis
 
 **Suggested Improvements:**
-1. **Architecture:** Try transformer-based models or deeper LSTMs
-2. **Data augmentation:** Time shifts, frequency shifts, amplitude scaling
-3. **Multi-channel:** Use all three TDI channels (A, E, T)
-4. **Realistic confusion:** Use galactic binary population models (e.g., GBMF)
-5. **More training data:** Scale to 10,000+ samples
-6. **Curriculum learning:** Start with easier examples (higher SNR) and gradually increase difficulty
-7. **Alternative features:** Try scattering transform or learned features instead of CWT
+1. **⚠️ FIX CWT PARAMETERS (HIGH PRIORITY):**
+   - Increase n_scales from 64 to ~140 to match LIGO's 13.7 scales/octave
+   - Consider increasing target_height to ~100 for better frequency resolution
+   - This may require ~2-3x more compute but should significantly improve feature extraction
+2. **Architecture:** Try transformer-based models or deeper LSTMs
+3. **Data augmentation:** Time shifts, frequency shifts, amplitude scaling
+4. **Multi-channel:** Use all three TDI channels (A, E, T)
+5. **Realistic confusion:** Use galactic binary population models (e.g., GBMF)
+6. **More training data:** Scale to 10,000+ samples
+7. **Curriculum learning:** Start with easier examples (higher SNR) and gradually increase difficulty
+8. **Alternative features:** Try scattering transform or learned features instead of CWT
 
 ### Files Generated
 
