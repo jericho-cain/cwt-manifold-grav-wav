@@ -80,9 +80,30 @@ def step2_train_autoencoder(config: dict, skip_preprocessing: bool = False):
     logger.info("STEP 2: Training autoencoder")
     logger.info("=" * 60)
     
-    from src.training.trainer import train_lisa_autoencoder
+    from src.training.trainer import LISAAutoencoderTrainer
     
-    trainer, results = train_lisa_autoencoder(config, skip_preprocessing=skip_preprocessing)
+    trainer = LISAAutoencoderTrainer(config)
+    
+    # Load and preprocess data
+    if skip_preprocessing:
+        import numpy as np
+        from pathlib import Path
+        logger.info("Skipping CWT preprocessing, loading existing preprocessed data...")
+        processed_dir = Path(config.get('preprocessing', {}).get('output_dir', 'data/processed_cwt'))
+        train_cwt = np.load(processed_dir / 'train_cwt.npy')
+        test_cwt = np.load(processed_dir / 'test_cwt.npy')
+        logger.info(f"Loaded preprocessed CWT data from {processed_dir}")
+        logger.info(f"Training CWT shape: {train_cwt.shape}")
+        logger.info(f"Test CWT shape: {test_cwt.shape}")
+    else:
+        train_cwt, test_cwt = trainer.load_and_preprocess_data()
+    
+    # Setup model and data
+    trainer.setup_model()
+    trainer.setup_data_loaders(train_cwt)
+    
+    # Train
+    results = trainer.train()
     
     logger.info("Training complete!")
     logger.info(f"  Best validation loss: {results['best_val_loss']:.6f}")
