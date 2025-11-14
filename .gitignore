@@ -81,7 +81,11 @@ CHECK_IN_MORNING.md
 PIPELINE_STATUS.md
 TEST_RUN_INFO.md
 RUN_OVERNIGHT.md
+RUN_FIXED_PIPELINE.md
+BUG_FIXED_SUMMARY.md
+MORNING_REPORT.md
 DOCUMENTATION_STRUCTURE.md
+debug_*.py
 
 # Legacy code from previous LIGO work (reference only, not for version control)
 legacy/
