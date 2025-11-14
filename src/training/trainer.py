@@ -490,7 +490,16 @@ def train_lisa_autoencoder(config_path: str) -> Tuple[LISAAutoencoderTrainer, Di
     trainer = LISAAutoencoderTrainer(config_path)
     
     # Load and preprocess data
-    train_cwt, test_cwt = trainer.load_and_preprocess_data()
+    if skip_preprocessing:
+        logger.info("Skipping CWT preprocessing, loading existing preprocessed data...")
+        processed_dir = Path(trainer.config.get('preprocessing', {}).get('output_dir', 'data/processed_cwt'))
+        train_cwt = np.load(processed_dir / 'train_cwt.npy')
+        test_cwt = np.load(processed_dir / 'test_cwt.npy')
+        logger.info(f"Loaded preprocessed CWT data from {processed_dir}")
+        logger.info(f"Training CWT shape: {train_cwt.shape}")
+        logger.info(f"Test CWT shape: {test_cwt.shape}")
+    else:
+        train_cwt, test_cwt = trainer.load_and_preprocess_data()
     
     # Setup model and data
     trainer.setup_model()

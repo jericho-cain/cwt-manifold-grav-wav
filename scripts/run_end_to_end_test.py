@@ -80,7 +80,9 @@ def step2_train_autoencoder(config: dict):
     logger.info("STEP 2: Training autoencoder")
     logger.info("=" * 60)
     
-    trainer, results = train_lisa_autoencoder(config)
+    from src.training.trainer import train_lisa_autoencoder
+    
+    trainer, results = train_lisa_autoencoder(config, skip_preprocessing=skip_preprocessing)
     
     logger.info("Training complete!")
     logger.info(f"  Best validation loss: {results['best_val_loss']:.6f}")
