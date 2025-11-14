@@ -1,0 +1,38 @@
+# LISA Dataset Generation Configuration
+# 
+# Realistic LISA Challenge: Detecting resolvable sources in confusion noise
+#
+# Training: Learn "typical LISA background" = instrumental noise + galactic confusion
+# Testing: Detect rare/loud sources (MBHBs, EMRIs) in this background
+
+# Time series parameters
+duration: 3600.0  # Duration of each segment in seconds (1 hour)
+sampling_rate: 1.0  # Sampling rate in Hz
+
+# Dataset sizes
+n_train_background: 1000  # Train on typical LISA background
+n_test_background: 200     # Test background (no resolvable sources)
+n_test_signals: 400        # Test with resolvable sources
+
+# Resolvable signal type distribution (must sum to 1.0)
+# These are the "interesting" sources we want to detect
+signal_fractions:
+  mbhb: 0.5              # Massive Black Hole Binaries (rare, loud)
+  emri: 0.3              # Extreme Mass Ratio Inspirals (very rare, loud)
+  galactic_binary: 0.2   # Bright Galactic Binary (common, resolvable)
+
+# SNR range for resolvable signals (louder than confusion)
+snr_range: [10.0, 50.0]
+
+# Galactic confusion noise parameters
+confusion_enabled: true
+n_confusion_sources: 50  # Unresolved galactic binaries per segment
+confusion_snr_range: [0.5, 5.0]  # Weak, below individual detection threshold
+
+# Random seed for reproducibility
+seed: 42
+
+# Output configuration
+output_dir: "data/raw"
+dataset_name: "lisa_dataset_realistic"
+

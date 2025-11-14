@@ -1,0 +1,88 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Data files (too large for git)
+data/raw/**
+data/processed/**
+*.npy
+*.npz
+*.h5
+*.hdf5
+
+# Keep directory structure but not contents
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Model checkpoints (too large for git)
+models/**
+!models/.gitkeep
+
+# Results
+results/**/*.npy
+results/**/*.npz
+results/**/*.h5
+results/**/*.png
+results/**/*.pdf
+!results/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+temp/
+tmp/
+
+# Legacy code from previous LIGO work (reference only, not for version control)
+legacy/
+
+# Development documentation (internal notes, not for public repo)
+dev_docs/
+

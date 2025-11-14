@@ -1,0 +1,43 @@
+# LISA Dataset Generation - Realistic Challenge Configuration
+#
+# This config addresses the LISA-specific challenge:
+# Detecting rare, scientifically interesting sources against a background
+# of galactic confusion noise
+#
+# Strategy: Train on "typical" LISA data, detect "interesting" sources
+
+# Time series parameters
+duration: 3600.0  # 1 hour segments
+sampling_rate: 1.0  # 1 Hz
+
+# Dataset sizes
+n_train_noise: 800   # Pure instrumental noise
+n_train_confusion: 200  # Instrumental noise + weak galactic confusion
+
+n_test_noise: 100    # Pure noise (control)
+n_test_confusion: 100  # Noise + confusion (typical background)
+n_test_signals: 400  # Noise + confusion + resolvable source
+
+# Signal composition - biased toward "interesting" sources
+# (In real LISA: GBs >> MBHBs >> EMRIs, but we want to test detection)
+signal_fractions:
+  mbhb: 0.5              # Massive Black Hole Binaries (rare, loud)
+  emri: 0.3              # Extreme Mass Ratio Inspirals (very rare, loud)
+  galactic_binary: 0.2   # Single bright GB (common, but resolvable)
+
+# SNR range - LISA has higher SNRs than LIGO
+snr_range: [10.0, 100.0]  # Resolvable sources
+
+# Confusion noise parameters
+galactic_confusion:
+  enabled: false  # Start simple, enable later
+  n_sources: 100  # Unresolved galactic binaries per segment
+  snr_range: [0.5, 5.0]  # Below individual detection threshold
+
+# Random seed
+seed: 42
+
+# Output
+output_dir: "data/raw"
+dataset_name: "lisa_dataset_realistic"
+

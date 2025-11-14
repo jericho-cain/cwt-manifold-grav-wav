@@ -1,0 +1,118 @@
+# LISA Autoencoder Training Configuration
+#
+# Trains autoencoder on LISA confusion background to learn typical structure
+# of noise + unresolved galactic binaries. Resolvable sources (MBHBs, EMRIs)
+# should have high reconstruction error and appear off-manifold.
+#
+# Key differences from LIGO:
+# - Input dimensions: (64, 3600) vs LIGO (8, 4096)
+# - Training data: Confusion background vs pure noise
+# - Test data: Background + resolvable sources vs noise + signals
+
+# Model configuration
+model:
+  type: 'cwt_lstm'            # Model architecture
+  input_height: 64            # LISA CWT frequency bins (vs LIGO: 8)
+  input_width: 3600           # LISA CWT time samples (vs LIGO: 4096)
+  latent_dim: 32              # Latent space dimension (same as LIGO)
+  lstm_hidden: 64             # Hidden layer size (same as LIGO)
+  dropout: 0.1                # Dropout for regularization
+
+  # Model saving
+  save:
+    model_dir: 'models'
+    best_model_name: 'lisa_best_model.pth'
+    final_model_name: 'lisa_final_model.pth'
+    save_every_n_epochs: 5
+
+# Training configuration
+training:
+  num_epochs: 30              # May need more for complex LISA data
+  batch_size: 4               # Smaller (LISA data is larger: 64×3600 vs 8×4096)
+  learning_rate: 0.001        
+  optimizer: 'sgd'            # Same as LIGO
+  momentum: 0.9
+  weight_decay: 1e-5
+  
+  loss_function: 'mse'        # Mean squared error (same as LIGO)
+  
+  # Learning rate scheduler
+  scheduler: 'reduce_on_plateau'  # Reduce LR when val loss plateaus
+  
+  # Validation
+  validation_split: 0.2       # 20% of training data for validation
+  
+  # Early stopping
+  early_stopping_patience: 7  # Stop if no improvement for 7 epochs
+  early_stopping_monitor: 'val_loss'
+  early_stopping_min_delta: 0.001  # Minimum improvement threshold
+
+# Data configuration
+pipeline:
+  data_flow:
+    # CWT preprocessed data directory
+    preprocessed_data_dir: 'data/processed/lisa_cwt'
+    
+    # Train on background only (confusion noise)
+    train_on_noise_only: true  # Same strategy as LIGO (train on "normal")
+    
+    # Sampling strategy (to manage memory)
+    sampling_strategy: 'conservative'  # 5 samples per file
+
+# Manifold geometry configuration (for later use)
+geometry:
+  k_neighbors: 32             # Number of neighbors (same as LIGO)
+  tangent_dim: null           # Auto-estimate from PCA (95% variance)
+  metric: 'euclidean'         # Distance metric for k-NN
+
+# Evaluation configuration (for grid search)
+evaluation:
+  # Grid search ranges for α, β
+  alpha_range: [0.5, 1.0, 2.0, 5.0, 10.0, 20.0]
+  beta_range: [0, 0.01, 0.05, 0.1, 0.5, 1.0, 2.0]
+  
+  # Metrics to compute
+  metrics:
+    - 'roc_auc'
+    - 'pr_auc'
+    - 'f1_score'
+    - 'precision'
+    - 'recall'
+
+# Pipeline metadata
+metadata:
+  experiment_name: 'lisa_manifold_baseline'
+  description: 'LISA autoencoder + manifold geometry for confusion source detection'
+  version: '1.0.0'
+  detector: 'LISA'
+  approach: 'Confusion background anomaly detection (Approach B)'
+  
+  # Expected results
+  scientific_question: 'Does manifold geometry help detect resolvable sources in LISA confusion?'
+  comparison: 'LIGO β=0 vs LISA β=?'
+  
+  # Dataset info
+  training_data: 'Confusion background (noise + 50 unresolved GBs)'
+  test_data: 'Background + resolvable sources (MBHBs, EMRIs, bright GBs)'
+
+# Notes for users
+notes: |
+  LISA Training Configuration
+  
+  This config trains an autoencoder on LISA confusion background (instrumental noise
+  + unresolved galactic binaries) to learn the typical structure. Resolvable sources
+  (MBHBs, EMRIs) should appear as anomalies.
+  
+  Key parameters to tune if needed:
+  - batch_size: Reduce if out of memory (LISA data is 64×3600 = 230k params)
+  - num_epochs: Increase if val loss still decreasing
+  - learning_rate: Adjust if training unstable
+  
+  Expected training time:
+  - On GPU: ~2-4 hours for 1000 training segments
+  - On CPU: ~8-12 hours
+  
+  Memory requirements:
+  - ~2-4 GB GPU memory (batch_size=4)
+  - ~4-8 GB RAM
+
