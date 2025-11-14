@@ -5,7 +5,7 @@ Runs the complete pipeline:
 1. Generate test dataset
 2. Train autoencoder
 3. Build manifold
-4. Evaluate β coefficient
+4. Evaluate beta coefficient
 
 Usage:
     python scripts/run_end_to_end_test.py --config config/test_run.yaml
@@ -255,14 +255,14 @@ def step4_evaluate(config: dict, trainer, manifold):
     logger.info(f"  Signal recon error (mean): {np.mean(recon_errors[test_labels == 1]):.6f}")
     logger.info("")
     
-    # Grid search over α, β
+    # Grid search over alpha, beta
     eval_config = config['evaluation']
     alpha_range = eval_config['alpha_ae_range']
     beta_range = eval_config['beta_manifold_range']
     
     logger.info(f"Grid search: alpha in {alpha_range}, beta in {beta_range}")
     
-    from sklearn.metrics import roc_auc_score
+    from sklearn.metrics import roc_auc_score, precision_score, recall_score
     
     best_auc = 0
     best_alpha = 0
@@ -289,13 +289,23 @@ def step4_evaluate(config: dict, trainer, manifold):
             # Compute AUC
             if len(np.unique(test_labels)) > 1:
                 auc = roc_auc_score(test_labels, combined_scores)
+                
+                # Compute precision and recall at median threshold
+                threshold = np.median(combined_scores)
+                predictions = (combined_scores > threshold).astype(int)
+                precision = precision_score(test_labels, predictions, zero_division=0)
+                recall = recall_score(test_labels, predictions, zero_division=0)
             else:
                 auc = 0.5
+                precision = 0.0
+                recall = 0.0
             
             results.append({
                 'alpha': alpha,
                 'beta': beta,
                 'auc': auc,
+                'precision': precision,
+                'recall': recall,
                 'mean_ae_error': float(np.mean(scores['ae_error'])),
                 'mean_manifold_norm': float(np.mean(scores['manifold_norm'])),
             })
@@ -307,11 +317,16 @@ def step4_evaluate(config: dict, trainer, manifold):
             
             logger.info(f"  alpha={alpha:.2f}, beta={beta:.2f}: AUC={auc:.4f}")
     
+    # Get best result details
+    best_result = [r for r in results if r['auc'] == best_auc][0]
+    
     logger.info("=" * 60)
     logger.info("BEST RESULT:")
     logger.info(f"  alpha = {best_alpha}")
     logger.info(f"  beta = {best_beta}")
     logger.info(f"  AUC = {best_auc:.4f}")
+    logger.info(f"  Precision = {best_result['precision']:.4f}")
+    logger.info(f"  Recall = {best_result['recall']:.4f}")
     logger.info("=" * 60)
     
     # Save results

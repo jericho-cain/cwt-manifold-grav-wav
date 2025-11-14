@@ -2,7 +2,7 @@
 Tests for LISA manifold-based evaluation.
 
 Tests the ManifoldScorer that combines AE reconstruction error
-with manifold geometry (the β coefficient).
+with manifold geometry (the beta coefficient).
 """
 
 import pytest
@@ -136,15 +136,15 @@ class TestManifoldScorer:
         assert scores['combined'].shape == (n_test,)
     
     def test_different_alpha_beta_weights(self, manifold, test_data):
-        """Test different α, β weights produce different scores."""
+        """Test different alpha, beta weights produce different scores."""
         recon_errors, latents = test_data
         
-        # Configuration 1: α=1, β=0
+        # Configuration 1: alpha=1, beta=0
         config1 = ManifoldScorerConfig(alpha_ae=1.0, beta_manifold=0.0)
         scorer1 = ManifoldScorer(manifold, config1)
         scores1 = scorer1.score_batch(recon_errors, latents)
         
-        # Configuration 2: α=1, β=1
+        # Configuration 2: alpha=1, beta=1
         config2 = ManifoldScorerConfig(alpha_ae=1.0, beta_manifold=1.0)
         scorer2 = ManifoldScorer(manifold, config2)
         scores2 = scorer2.score_batch(recon_errors, latents)
@@ -192,7 +192,7 @@ class TestManifoldScorer:
 
 
 class TestBetaCoefficientSimulation:
-    """Test β coefficient behavior (what we're measuring!)."""
+    """Test beta coefficient behavior (what we're measuring!)."""
     
     @pytest.fixture
     def setup_experiment(self):
@@ -223,10 +223,10 @@ class TestBetaCoefficientSimulation:
         return manifold, recon_errors, test_latents, labels
     
     def test_beta_zero_equivalent_to_ae_only(self, setup_experiment):
-        """Test β=0 is equivalent to AE-only (LIGO result)."""
+        """Test beta=0 is equivalent to AE-only (LIGO result)."""
         manifold, recon_errors, test_latents, labels = setup_experiment
         
-        # β=0 (LIGO result: manifold doesn't help)
+        # beta=0 (LIGO result: manifold doesn't help)
         config_beta0 = ManifoldScorerConfig(alpha_ae=1.0, beta_manifold=0.0)
         scorer_beta0 = ManifoldScorer(manifold, config_beta0)
         scores_beta0 = scorer_beta0.score_batch(recon_errors, test_latents)
@@ -240,10 +240,10 @@ class TestBetaCoefficientSimulation:
         assert np.allclose(scores_beta0['combined'], scores_ae['combined'])
     
     def test_beta_positive_uses_manifold_geometry(self, setup_experiment):
-        """Test β>0 incorporates manifold geometry."""
+        """Test beta>0 incorporates manifold geometry."""
         manifold, recon_errors, test_latents, labels = setup_experiment
         
-        # Get scores with β>0
+        # Get scores with beta>0
         config = ManifoldScorerConfig(alpha_ae=1.0, beta_manifold=1.0)
         scorer = ManifoldScorer(manifold, config)
         scores = scorer.score_batch(recon_errors, test_latents)
@@ -320,7 +320,7 @@ class TestManifoldScorerWithLISARealisticData:
         assert np.mean(resolvable_manifold) > np.mean(bg_manifold)
     
     def test_grid_search_simulation(self):
-        """Simulate grid search over α, β (what we'll do for real!)."""
+        """Simulate grid search over alpha, beta (what we'll do for real!)."""
         np.random.seed(42)
         
         # Setup data
@@ -356,7 +356,7 @@ class TestManifoldScorerWithLISARealisticData:
         # Should have results for all combinations
         assert len(results) == len(alpha_range) * len(beta_range)
         
-        # Different α, β should produce different scores
+        # Different alpha, beta should produce different scores
         scores_list = [r['mean_score'] for r in results]
         assert len(set(scores_list)) > 1  # Not all the same
 

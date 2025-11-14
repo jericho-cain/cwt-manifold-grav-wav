@@ -378,7 +378,7 @@ class LISAAutoencoderTrainer:
             
             # Save best model
             if val_loss < self.best_val_loss - min_delta:
-                logger.info(f"Validation loss improved: {self.best_val_loss:.6f} → {val_loss:.6f}")
+                logger.info(f"Validation loss improved: {self.best_val_loss:.6f} -> {val_loss:.6f}")
                 self.best_val_loss = val_loss
                 self.epochs_without_improvement = 0
                 

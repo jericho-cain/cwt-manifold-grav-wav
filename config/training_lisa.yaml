@@ -67,7 +67,7 @@ geometry:
 
 # Evaluation configuration (for grid search)
 evaluation:
-  # Grid search ranges for α, β
+  # Grid search ranges for alpha, beta
   alpha_range: [0.5, 1.0, 2.0, 5.0, 10.0, 20.0]
   beta_range: [0, 0.01, 0.05, 0.1, 0.5, 1.0, 2.0]
   
@@ -89,7 +89,7 @@ metadata:
   
   # Expected results
   scientific_question: 'Does manifold geometry help detect resolvable sources in LISA confusion?'
-  comparison: 'LIGO β=0 vs LISA β=?'
+  comparison: 'LIGO beta=0 vs LISA beta=?'
   
   # Dataset info
   training_data: 'Confusion background (noise + 50 unresolved GBs)'

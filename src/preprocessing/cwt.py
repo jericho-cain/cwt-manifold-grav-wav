@@ -106,7 +106,7 @@ def compute_global_normalization_stats(
     
     # Concatenate all training background
     combined_background = np.concatenate(all_filtered)
-    logger.info(f"Combined {len(all_filtered)} files → {len(combined_background)} samples")
+    logger.info(f"Combined {len(all_filtered)} files -> {len(combined_background)} samples")
     
     # Compute global statistics
     global_mean = np.mean(combined_background)

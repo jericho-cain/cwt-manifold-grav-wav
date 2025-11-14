@@ -5,14 +5,14 @@ This module combines autoencoder reconstruction error with manifold geometry
 to detect resolvable sources in LISA confusion noise.
 
 Scoring formula:
-    combined_score = α * reconstruction_error + β * off_manifold_distance
+    combined_score = alpha * reconstruction_error + beta * off_manifold_distance
 
-The β coefficient directly measures whether manifold geometry helps!
+The beta coefficient directly measures whether manifold geometry helps!
 
 For LISA:
-- α weight for AE reconstruction (signal vs background)
-- β weight for manifold geometry (on-manifold vs off-manifold)
-- Grid search over α, β to find optimal combination
+- alpha weight for AE reconstruction (signal vs background)
+- beta weight for manifold geometry (on-manifold vs off-manifold)
+- Grid search over alpha, beta to find optimal combination
 
 Adapted from LIGO manifold learning work.
 Date: November 2024
@@ -75,14 +75,14 @@ class ManifoldScorer:
     - Reconstruction error: How well does AE reconstruct the segment?
     - Off-manifold distance: How far is latent from confusion background manifold?
     
-    The β coefficient measures the importance of manifold geometry.
+    The beta coefficient measures the importance of manifold geometry.
     
     Parameters
     ----------
     manifold : LatentManifold
         Built manifold from training latents (confusion background)
     config : ManifoldScorerConfig
-        Scoring configuration (α, β weights)
+        Scoring configuration (alpha, beta weights)
         
     Attributes
     ----------
@@ -96,7 +96,7 @@ class ManifoldScorer:
     >>> # Build manifold from training data
     >>> manifold = LatentManifold(train_latents, manifold_config)
     >>> 
-    >>> # Create scorer with α=1.0, β=0.5
+    >>> # Create scorer with alpha=1.0, beta=0.5
     >>> config = ManifoldScorerConfig(alpha_ae=1.0, beta_manifold=0.5)
     >>> scorer = ManifoldScorer(manifold, config)
     >>> 
@@ -131,7 +131,7 @@ class ManifoldScorer:
         - ae_error: Reconstruction errors from autoencoder
         - manifold_norm: Off-manifold distances (normal deviation)
         - density: Density scores (if enabled)
-        - combined: Final anomaly scores (α * AE + β * manifold)
+        - combined: Final anomaly scores (alpha * AE + beta * manifold)
         
         Parameters
         ----------
