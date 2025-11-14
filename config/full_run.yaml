@@ -28,7 +28,7 @@ data:
   
   # Output
   output_dir: "data/raw/full_run"
-  name: "lisa_dataset"
+  dataset_name: "lisa_full_run"
 
 # CWT preprocessing
 preprocessing:
