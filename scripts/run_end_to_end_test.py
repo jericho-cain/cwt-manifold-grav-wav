@@ -118,9 +118,9 @@ def step3_build_manifold(config: dict, trainer):
     logger.info("STEP 3: Building manifold")
     logger.info("=" * 60)
     
-    # Load training data - DatasetGenerator creates output_dir/name subdirectory
+    # Load training data - DatasetGenerator creates output_dir/dataset_name subdirectory
     output_dir = Path(config['data']['output_dir'])
-    dataset_name = config['data'].get('name', 'lisa_dataset')
+    dataset_name = config['data'].get('dataset_name', 'lisa_dataset')
     data_dir = output_dir / dataset_name
     
     train_path = data_dir / "train.h5"
@@ -187,9 +187,9 @@ def step4_evaluate(config: dict, trainer, manifold):
     logger.info("STEP 4: Evaluating beta coefficient")
     logger.info("=" * 60)
     
-    # Load test data - DatasetGenerator creates output_dir/name subdirectory
+    # Load test data - DatasetGenerator creates output_dir/dataset_name subdirectory
     output_dir = Path(config['data']['output_dir'])
-    dataset_name = config['data'].get('name', 'lisa_dataset')
+    dataset_name = config['data'].get('dataset_name', 'lisa_dataset')
     data_dir = output_dir / dataset_name
     
     test_path = data_dir / "test.h5"
