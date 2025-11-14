@@ -118,15 +118,6 @@ def step3_build_manifold(config: dict, trainer):
     logger.info("STEP 3: Building manifold")
     logger.info("=" * 60)
     
-    # Load training data - DatasetGenerator creates output_dir/dataset_name subdirectory
-    output_dir = Path(config['data']['output_dir'])
-    dataset_name = config['data'].get('dataset_name', 'lisa_dataset')
-    data_dir = output_dir / dataset_name
-    
-    train_path = data_dir / "train.h5"
-    with h5py.File(train_path, 'r') as f:
-        train_data = f['data'][:]
-    
     # Extract latents from training data (confusion background)
     logger.info("Extracting training latents...")
     
