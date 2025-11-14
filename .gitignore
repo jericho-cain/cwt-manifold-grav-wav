@@ -53,12 +53,8 @@ data/processed/**
 models/**
 !models/.gitkeep
 
-# Results
-results/**/*.npy
-results/**/*.npz
-results/**/*.h5
-results/**/*.png
-results/**/*.pdf
+# Results (ignore ALL results, including JSON outputs from runs)
+results/**
 !results/.gitkeep
 
 # OS
@@ -71,14 +67,19 @@ Thumbs.db
 htmlcov/
 .tox/
 
-# Logs
+# Logs (ALL logs should be ignored)
 *.log
 logs/
+*_run*.log
+end_to_end_*.log
 
 # Temporary files
 *.tmp
 temp/
 tmp/
+CHECK_IN_MORNING.md
+PIPELINE_STATUS.md
+TEST_RUN_INFO.md
 
 # Legacy code from previous LIGO work (reference only, not for version control)
 legacy/

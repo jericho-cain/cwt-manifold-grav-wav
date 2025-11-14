@@ -22,7 +22,13 @@ def load_config(config_path: str) -> DatasetConfig:
     with open(config_path, 'r') as f:
         config_dict = yaml.safe_load(f)
     
-    return DatasetConfig(**config_dict)
+    # Handle nested config (extract 'data' section if present)
+    if 'data' in config_dict:
+        data_config = config_dict['data']
+    else:
+        data_config = config_dict
+    
+    return DatasetConfig(**data_config)
 
 
 def main():

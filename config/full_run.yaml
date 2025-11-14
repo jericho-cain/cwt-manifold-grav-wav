@@ -1,0 +1,95 @@
+# Full Production Run Configuration
+#
+# Larger dataset and more training for meaningful scientific results
+# Expected time: 2-4 hours
+
+# Data generation parameters
+data:
+  duration: 3600.0  # 1 hour segments
+  sampling_rate: 1.0  # Hz
+  seed: 42
+  
+  # Full dataset
+  n_train_background: 1000  # 10x larger
+  n_test_background: 200
+  n_test_signals: 400
+  
+  # Confusion noise (realistic LISA)
+  confusion_enabled: true
+  n_confusion_sources: 50
+  confusion_snr_range: [1.0, 5.0]
+  
+  # Signal parameters
+  snr_range: [5.0, 20.0]
+  signal_fractions:
+    mbhb: 0.4
+    emri: 0.3
+    galactic_binary: 0.3
+  
+  # Output
+  output_dir: "data/raw/full_run"
+  name: "lisa_dataset"
+
+# CWT preprocessing
+preprocessing:
+  cwt:
+    fmin: 1.0e-4  # 0.1 mHz
+    fmax: 1.0e-1  # 100 mHz
+    n_scales: 64
+    target_height: 64
+    target_width: 3600
+    wavelet: "morl"
+    use_global_norm: true
+  
+  output_dir: "data/processed/full_run"
+
+# Model configuration
+model:
+  type: "cwt_lstm"
+  input_height: 64
+  input_width: 3600
+  latent_dim: 32
+  lstm_hidden: 64
+  dropout: 0.1
+
+# Training parameters
+training:
+  num_epochs: 30          # 3x more epochs
+  batch_size: 4
+  learning_rate: 0.001
+  optimizer: "adam"
+  loss_function: "mse"
+  validation_split: 0.2
+  early_stopping_patience: 5
+  early_stopping_min_delta: 0.0001
+  scheduler: "reduce_on_plateau"
+  
+  # Checkpointing
+  save_dir: "models/full_run"
+  save_every_n_epochs: 5
+
+# Manifold parameters
+manifold:
+  k_neighbors: 32
+  tangent_dim: 8
+  metric: "euclidean"
+
+# Evaluation (grid search)
+evaluation:
+  scoring_mode: "ae_plus_manifold"
+  
+  # Grid search ranges
+  alpha_ae_range: [0.5, 1.0, 2.0, 5.0, 10.0]
+  beta_manifold_range: [0.0, 0.01, 0.05, 0.1, 0.5, 1.0, 2.0]
+  
+  use_density: false
+  gamma_density: 0.0
+  
+  output_dir: "results/full_run"
+
+# Pipeline metadata
+pipeline:
+  run_name: "full_run"
+  description: "Full production run with 1000 training samples and 30 epochs"
+  version: "1.0.0"
+
