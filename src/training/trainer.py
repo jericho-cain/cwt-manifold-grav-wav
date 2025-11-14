@@ -464,7 +464,7 @@ class LISAAutoencoderTrainer:
         return np.vstack(latents)
 
 
-def train_lisa_autoencoder(config_path: str) -> Tuple[LISAAutoencoderTrainer, Dict[str, Any]]:
+def train_lisa_autoencoder(config_path: str, skip_preprocessing: bool = False) -> Tuple[LISAAutoencoderTrainer, Dict[str, Any]]:
     """
     Convenience function to train LISA autoencoder.
     
