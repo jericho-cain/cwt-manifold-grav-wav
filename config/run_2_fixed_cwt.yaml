@@ -7,7 +7,7 @@
 
 # Data configuration
 data:
-  name: "run_2_fixed_cwt"
+  dataset_name: "run_2_fixed_cwt"
   output_dir: "data/raw"
   
   # Dataset sizes (same as Run 1)

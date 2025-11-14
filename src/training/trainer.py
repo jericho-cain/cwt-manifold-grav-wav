@@ -80,9 +80,9 @@ class LISAAutoencoderTrainer:
         """
         logger.info("Loading and preprocessing data...")
         
-        # Paths - DatasetGenerator creates output_dir/name subdirectory
+        # Paths - DatasetGenerator creates output_dir/dataset_name subdirectory
         output_dir = Path(self.config['data']['output_dir'])
-        dataset_name = self.config['data'].get('name', 'lisa_dataset')
+        dataset_name = self.config['data'].get('dataset_name', 'lisa_dataset')
         data_dir = output_dir / dataset_name
         
         train_path = data_dir / "train.h5"
