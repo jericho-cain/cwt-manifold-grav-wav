@@ -1,0 +1,146 @@
+# Cursor Rules for cwt-manifold-grav-wav
+
+## Code Style & Communication
+
+### Console Output & Logging
+- **NO EMOJIS** - User dislikes them, use plain text
+- **NO UNICODE CHARACTERS** - Windows console can't handle them (→, ✓, ✗, α, β, etc.)
+  - Use ASCII equivalents: ->, [OK], [X], alpha, beta
+- **All logs go in `logs/` directory** - Never at top level
+- Log files are gitignored
+
+### File Organization
+- **NO temporary files at top level** - Keep repo root clean
+  - Debug scripts (`debug_*.py`, `compute_*.py`) should be deleted after use, not committed
+  - Temporary markdown files go in `dev_docs/` (gitignored) or `docs/` (tracked)
+  - Only these files allowed at top level: `README.md`, `requirements.txt`, `.gitignore`, `pytest.ini`
+
+### Documentation Structure
+- **`docs/`** - Public documentation (tracked by git)
+  - User-facing guides, API docs, mathematical framework
+  - Should be polished and professional
+- **`dev_docs/`** - Development notes (gitignored)
+  - Internal discussions, session notes, migration plans
+  - Rough drafts and work-in-progress
+- **No documentation files at repo root** except `README.md`
+
+### Scripts Organization
+- **`scripts/`** - All executable scripts organized by purpose
+  - `scripts/data_generation/` - Data generation scripts
+  - `scripts/training/` - Training scripts
+  - `scripts/validation/` - Validation scripts
+  - `scripts/analysis/` - Analysis scripts
+  - Main orchestration scripts at `scripts/` root
+- **Never leave temporary scripts at top level**
+
+## Platform-Specific (Windows/PowerShell)
+
+### PowerShell Syntax
+- **NO `&` for background jobs** - PowerShell doesn't support UNIX-style `&`
+- Use `Start-Job` or `Start-Process` for background tasks
+- Use `;` not `&&` for command chaining
+- PowerShell background jobs are unreliable - prefer new terminal windows
+
+### Commands to Use
+```powershell
+# GOOD: Run in background (new window)
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd PATH; COMMAND"
+
+# GOOD: Chain commands
+command1; command2
+
+# BAD: Unix-style background
+command &
+
+# BAD: Unix-style chaining
+command1 && command2
+```
+
+## Python & Scientific Computing
+
+### CWT Parameters
+- **Always adapt parameters for physics** - Don't blindly copy from LIGO to LISA
+- Key metric: **scales per octave** should match across different frequency ranges
+- LIGO used ~13.7 scales/octave - LISA should match this
+- Document parameter choices in `docs/RUN_REPORTS.md`
+
+### Testing
+- All tests in `tests/` directory
+- Run with: `pytest -v`
+- Coverage reports go in `htmlcov/` (gitignored)
+
+### Model Training
+- Models saved to `models/{run_name}/`
+- Results saved to `results/{run_name}/`
+- Always include in `docs/RUN_REPORTS.md`:
+  - Configuration (data, preprocessing, model, training)
+  - Results (AUC, Precision, Recall, F1)
+  - Key findings and limitations
+  - Comparison to previous runs
+
+## Git Workflow
+
+### Commit Messages
+- Use conventional commits: `feat:`, `fix:`, `docs:`, `analysis:`, `test:`
+- Be descriptive - explain WHY not just WHAT
+- Reference run numbers when relevant
+
+### What to Commit
+- Source code, tests, configs, public docs
+- **Never commit**: logs, data files, models, debug scripts, dev notes
+
+### What to Ignore
+- See `.gitignore` for full list
+- Key: `logs/`, `data/`, `models/`, `results/`, `dev_docs/`, `legacy/`
+
+## Project-Specific Conventions
+
+### Run Tracking
+- Each training run gets an entry in `docs/RUN_REPORTS.md`
+- Config file: `config/run_N_description.yaml`
+- Logs: `logs/run_N.log`
+- Models: `models/run_N/`
+- Results: `results/run_N/`
+
+### Metrics to Report
+- **Always include**: AUC, Precision, Recall
+- Computed at median threshold for consistency
+- F1 score optional but recommended
+- Report for best (alpha, beta) from grid search
+
+### Code Structure
+```
+src/
+  data/          - Dataset generation, loading
+  preprocessing/ - CWT and feature extraction
+  models/        - Neural network architectures
+  training/      - Training loops and utilities
+  geometry/      - Manifold construction and analysis
+  evaluation/    - Scoring and metrics
+```
+
+## Common Mistakes to Avoid
+
+1. **Don't use Unicode in Python print/logging** - Windows console breaks
+2. **Don't put temporary analysis scripts at top level** - Clean up after use
+3. **Don't use PowerShell background jobs** - They're unreliable, use new windows
+4. **Don't blindly copy hyperparameters** - Adapt for physics (especially CWT)
+5. **Don't forget to update `docs/RUN_REPORTS.md`** - Document every run
+6. **Don't commit without testing on Windows** - User's primary platform
+
+## User Preferences
+
+- Prefers **direct, technical communication** - No fluff
+- Likes **comprehensive documentation** - Detail over brevity when documenting
+- Values **reproducibility** - Document everything needed to recreate runs
+- Appreciates **proactive problem identification** - Point out issues before they become problems
+- Wants **clean repository structure** - Organization matters
+
+## Questions to Ask Before Acting
+
+1. Will this create files at the top level? → Put them somewhere appropriate
+2. Does this use Unicode characters? → Replace with ASCII
+3. Is this a temporary script? → Clean it up after use
+4. Does this need to be documented? → Add to appropriate docs location
+5. Is this Windows-compatible? → Test PowerShell syntax
+
