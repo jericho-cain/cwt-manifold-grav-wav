@@ -1,0 +1,89 @@
+# Run 2: Fixed CWT Parameters
+# 
+# This run corrects the CWT parameter error from Run 1:
+# - Increased n_scales from 64 to 140 (to match LIGO's 13.7 scales/octave)
+# - Increased target_height from 64 to 100 (better frequency resolution)
+# - All other parameters same as Run 1 for direct comparison
+
+# Data configuration
+data:
+  name: "run_2_fixed_cwt"
+  output_dir: "data/raw"
+  
+  # Dataset sizes (same as Run 1)
+  n_train_background: 1000
+  n_test_background: 200
+  n_test_signals: 400
+  
+  # Time series parameters (same as Run 1)
+  duration: 3600  # 1 hour
+  sampling_rate: 1.0  # Hz
+  
+  # Confusion noise configuration (same as Run 1)
+  confusion_enabled: true
+  n_confusion_sources: 1000
+  confusion_snr_range: [0.1, 2.0]
+  
+  # Random seed
+  seed: 42
+
+# Preprocessing configuration
+preprocessing:
+  output_dir: "data/processed"
+  
+  cwt:
+    # FIXED PARAMETERS - Match LIGO's scales/octave
+    fmin: 1.0e-4  # Hz
+    fmax: 1.0e-1  # Hz
+    n_scales: 140  # INCREASED from 64 to match ~14 scales/octave
+    target_height: 100  # INCREASED from 64 for better frequency resolution
+    target_width: 3600  # Keep same (1 sample per second for 1 hour)
+    sampling_rate: 1.0  # Hz
+    wavelet: 'morl'
+    use_global_norm: true
+
+# Model configuration (same as Run 1)
+model:
+  type: "cwt_lstm"
+  input_height: 100  # UPDATED to match new target_height
+  input_width: 3600
+  latent_dim: 32
+  lstm_hidden: 64
+  dropout: 0.1
+
+# Training configuration (same as Run 1)
+training:
+  num_epochs: 30
+  batch_size: 4
+  learning_rate: 0.001
+  optimizer: "adam"
+  loss_function: "mse"
+  validation_split: 0.2
+  early_stopping_patience: 5
+  early_stopping_min_delta: 0.0001
+  early_stopping_monitor: "val_loss"
+  scheduler: "reduce_on_plateau"
+  momentum: 0.9
+  weight_decay: 1e-5
+  save_dir: "models"
+  
+# Manifold configuration (same as Run 1)
+manifold:
+  k_neighbors: 32
+  tangent_dim: 8
+  metric: "euclidean"
+
+# Evaluation configuration (same as Run 1)
+evaluation:
+  scoring_mode: "ae_plus_manifold"
+  alpha_ae_range: [0.5, 1.0, 2.0, 5.0, 10.0]
+  beta_manifold_range: [0.0, 0.01, 0.05, 0.1, 0.5, 1.0, 2.0]
+  use_density: false
+  gamma_density: 0.0
+
+# Pipeline metadata
+pipeline:
+  run_name: 'run_2_fixed_cwt'
+  description: 'Fixed CWT parameters: n_scales=140, target_height=100'
+  version: '2.0.0'
+
