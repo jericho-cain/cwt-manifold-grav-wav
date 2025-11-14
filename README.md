@@ -1,6 +1,14 @@
+<div align="center">
+
 # LISA Manifold Gravitational Wave Detection
 
-**Testing manifold-based detection of resolvable sources in galactic confusion noise.**
+<img src="assets/logo.png" alt="Project Logo" width="300"/>
+
+### Testing manifold-based detection of resolvable sources in galactic confusion noise
+
+</div>
+
+---
 
 ## The LISA Challenge
 
