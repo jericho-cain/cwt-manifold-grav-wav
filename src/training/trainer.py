@@ -195,9 +195,9 @@ class LISAAutoencoderTrainer:
         else:
             self.optimizer = optim.SGD(
                 self.model.parameters(),
-                lr=train_config['learning_rate'],
-                momentum=train_config.get('momentum', 0.9),
-                weight_decay=train_config.get('weight_decay', 1e-5)
+                lr=float(train_config['learning_rate']),
+                momentum=float(train_config.get('momentum', 0.9)),
+                weight_decay=float(train_config.get('weight_decay', 1e-5))
             )
         
         # Loss function
