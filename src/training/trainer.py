@@ -101,8 +101,11 @@ class LISAAutoencoderTrainer:
             use_global_norm=cwt_cfg.get('use_global_norm', True),
         )
         
-        # Step 1: Compute global normalization from training background
-        logger.info("Computing global normalization statistics...")
+        # Step 1: Compute global normalization from RAW training background
+        # NOTE: Must compute from RAW time-domain data, NOT from CWT outputs!
+        # Computing from CWT outputs gives useless stats (mean≈0, std=1) since
+        # CWT already does per-segment normalization.
+        logger.info("Computing global normalization statistics from raw time-domain data...")
         with h5py.File(train_path, 'r') as f:
             train_data = f['data'][:]
         
@@ -110,28 +113,13 @@ class LISAAutoencoderTrainer:
         n_norm_samples = min(100, len(train_data))
         norm_samples = train_data[:n_norm_samples]
         
-        # Compute CWT for normalization
-        from src.preprocessing.cwt import cwt_lisa
-        cwt_values = []
-        for signal in tqdm(norm_samples, desc="Computing norm stats"):
-            scalogram, _, _ = cwt_lisa(
-                signal,
-                fs=1.0,
-                fmin=cwt_config.fmin,
-                fmax=cwt_config.fmax,
-                n_scales=cwt_config.n_scales,
-                wavelet=cwt_config.wavelet,
-                global_mean=None,
-                global_std=None,
-            )
-            if scalogram is not None:
-                cwt_values.append(scalogram.flatten())
-        
-        all_values = np.concatenate(cwt_values)
+        # Compute global mean/std directly from raw time-domain data
+        # This is the CORRECT approach - same as legacy LIGO code
+        all_values = norm_samples.flatten()
         global_mean = np.mean(all_values)
         global_std = np.std(all_values)
         
-        logger.info(f"Global normalization: mean={global_mean:.6e}, std={global_std:.6e}")
+        logger.info(f"Global normalization (from raw data): mean={global_mean:.6e}, std={global_std:.6e}")
         
         # Update CWT config with global stats
         cwt_config.global_mean = float(global_mean)
