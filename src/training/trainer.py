@@ -189,8 +189,8 @@ class LISAAutoencoderTrainer:
         if train_config.get('optimizer', 'adam').lower() == 'adam':
             self.optimizer = optim.Adam(
                 self.model.parameters(),
-                lr=train_config['learning_rate'],
-                weight_decay=train_config.get('weight_decay', 1e-5)
+                lr=float(train_config['learning_rate']),
+                weight_decay=float(train_config.get('weight_decay', 1e-5))
             )
         else:
             self.optimizer = optim.SGD(
