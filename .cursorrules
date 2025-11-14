@@ -40,6 +40,8 @@
 - Use `Start-Job` or `Start-Process` for background tasks
 - Use `;` not `&&` for command chaining
 - PowerShell background jobs are unreliable - prefer new terminal windows
+- **NEVER automatically run long-running jobs** - Always tell user to run in their own PowerShell window
+- For training runs, provide the command and let user run it manually
 
 ### Commands to Use
 ```powershell
