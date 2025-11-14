@@ -413,7 +413,7 @@ def main():
         
         # Step 2: Train autoencoder
         if not args.skip_training:
-            trainer, train_results = step2_train_autoencoder(config)
+            trainer, train_results = step2_train_autoencoder(config, skip_preprocessing=args.skip_preprocessing)
         else:
             logger.info("Skipping training (--skip-training), loading trained model...")
             from src.training.trainer import LISAAutoencoderTrainer
