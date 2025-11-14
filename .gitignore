@@ -80,6 +80,8 @@ tmp/
 CHECK_IN_MORNING.md
 PIPELINE_STATUS.md
 TEST_RUN_INFO.md
+RUN_OVERNIGHT.md
+DOCUMENTATION_STRUCTURE.md
 
 # Legacy code from previous LIGO work (reference only, not for version control)
 legacy/
