@@ -76,8 +76,9 @@ logs/
 temp/
 tmp/
 # Top-level temporary files (don't clutter repo root!)
-*.md
-!README.md
+# Only ignore markdown files at TOP LEVEL (not in subdirectories)
+/*.md
+!/README.md
 debug_*.py
 compute_*.py
 
