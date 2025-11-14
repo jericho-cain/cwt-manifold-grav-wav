@@ -74,7 +74,7 @@ def step1_generate_data(config: dict):
     return train_data, test_data, test_labels
 
 
-def step2_train_autoencoder(config: dict):
+def step2_train_autoencoder(config: dict, skip_preprocessing: bool = False):
     """Step 2: Train autoencoder on confusion background."""
     logger.info("=" * 60)
     logger.info("STEP 2: Training autoencoder")
