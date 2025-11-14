@@ -129,34 +129,26 @@ def step3_build_manifold(config: dict, trainer):
     
     # Extract latents from training data (confusion background)
     logger.info("Extracting training latents...")
-    # Need to preprocess to CWT first
-    from src.preprocessing import LISACWTTransform, CWTConfig
     
-    cwt_cfg = config.get('preprocessing', {}).get('cwt', {})
-    cwt_config = CWTConfig(
-        fmin=cwt_cfg.get('fmin', 1e-4),
-        fmax=cwt_cfg.get('fmax', 1e-1),
-        n_scales=cwt_cfg.get('n_scales', 64),
-        target_height=cwt_cfg.get('target_height', 64),
-        target_width=cwt_cfg.get('target_width', 3600),
-        sampling_rate=1.0,
-        wavelet=cwt_cfg.get('wavelet', 'morl'),
-        use_global_norm=True,
-        global_mean=trainer.best_val_loss,  # Placeholder - would need to load properly
-        global_std=1.0,
-    )
+    # Load preprocessed CWT data (created during training/preprocessing)
+    import numpy as np
+    processed_dir = Path(config.get('preprocessing', {}).get('output_dir', 'data/processed_cwt'))
+    train_cwt = np.load(processed_dir / 'train_cwt.npy')
+    logger.info(f"Loaded preprocessed CWT data: {train_cwt.shape}")
     
-    # Actually, trainer already has this capability
-    # We need to load the CWT data that was already created during training
-    # For now, let's extract latents from the training loader
-    
+    # Extract latents using the trained model
     logger.info("Extracting latents from training data...")
     train_latents = []
     trainer.model.eval()
     
+    batch_size = config['training'].get('batch_size', 4)
     with torch.no_grad():
-        for batch in trainer.train_loader:
-            x = batch[0].to(trainer.device)
+        for i in range(0, len(train_cwt), batch_size):
+            batch = train_cwt[i:i + batch_size]
+            # Add channel dimension if needed (CWT is 2D, model expects 3D: [B, C, H, W])
+            if batch.ndim == 3:
+                batch = batch[:, np.newaxis, :, :]
+            x = torch.FloatTensor(batch).to(trainer.device)
             latent = trainer.model.encode(x)
             train_latents.append(latent.cpu().numpy())
     
