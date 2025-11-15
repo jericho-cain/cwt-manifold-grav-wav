@@ -138,7 +138,7 @@ Combined characteristic strain: ~10⁻²⁰ Hz⁻¹/² at peak sensitivity (~3 m
 After data generation:
 
 1. **Preprocess data** - Implement whitening, normalization
-2. **Train autoencoder** - Migrate LSTM autoencoder from LIGO work
+2. **Train autoencoder** - Migrate autoencoder from LIGO work
 3. **Build manifold** - Extract latent codes and construct k-NN manifold
 4. **Evaluate** - Test AE-only vs AE+Manifold scoring
 

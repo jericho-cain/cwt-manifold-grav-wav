@@ -63,7 +63,7 @@ cwt-manifold-grav-wav/
 ### 🔄 Phase 2: Autoencoder Migration (PENDING)
 
 **Tasks:**
-- [ ] Migrate LSTM autoencoder from LIGO repo
+- [ ] Migrate autoencoder from LIGO repo
 - [ ] Adapt for LISA time series characteristics
 - [ ] Implement preprocessing (whitening, normalization)
 - [ ] Create training pipeline

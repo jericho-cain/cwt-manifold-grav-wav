@@ -1,25 +1,26 @@
-# Run 2: Fixed CWT Parameters
+# Run 3: 5000 Training Samples
 # 
-# This run corrects the CWT parameter error from Run 1:
-# - Increased n_scales from 64 to 140 (to match LIGO's 13.7 scales/octave)
-# - Increased target_height from 64 to 100 (better frequency resolution)
-# - All other parameters same as Run 1 for direct comparison
+# This run uses 5x more training samples than Run 2 to test if more data
+# improves generalization and performance.
+# - Increased n_train_background from 1000 to 5000
+# - All other parameters same as Run 2 for direct comparison
+# - CWT parameters: n_scales=140, target_height=100 (fixed from Run 2)
 
 # Data configuration
 data:
-  dataset_name: "run_2_fixed_cwt"
+  dataset_name: "run_3_5000_samples"
   output_dir: "data/raw"
   
-  # Dataset sizes (same as Run 1)
-  n_train_background: 1000
+  # Dataset sizes (5x larger training set)
+  n_train_background: 5000  # INCREASED from 1000
   n_test_background: 200
   n_test_signals: 400
   
-  # Time series parameters (same as Run 1)
+  # Time series parameters (same as Run 2)
   duration: 3600  # 1 hour
   sampling_rate: 1.0  # Hz
   
-  # Confusion noise configuration (same as Run 1)
+  # Confusion noise configuration (same as Run 2)
   confusion_enabled: true
   n_confusion_sources: 1000
   confusion_snr_range: [0.1, 2.0]
@@ -29,10 +30,10 @@ data:
 
 # Preprocessing configuration (run-specific directory)
 preprocessing:
-  output_dir: "data/processed/run_2_fixed_cwt"
+  output_dir: "data/processed/run_3_5000_samples"
   
   cwt:
-    # FIXED PARAMETERS - Match LIGO's scales/octave
+    # FIXED PARAMETERS - Match LIGO's scales/octave (from Run 2)
     fmin: 1.0e-4  # Hz
     fmax: 1.0e-1  # Hz
     n_scales: 140  # INCREASED from 64 to match ~14 scales/octave
@@ -42,7 +43,7 @@ preprocessing:
     wavelet: 'morl'
     use_global_norm: true
 
-# Model configuration (same as Run 1)
+# Model configuration (same as Run 2)
 model:
   type: "cwt_ae"
   input_height: 100  # UPDATED to match new target_height
@@ -51,29 +52,29 @@ model:
   lstm_hidden: 64
   dropout: 0.1
 
-# Training configuration (same as Run 1)
+# Training configuration (increased epochs for larger dataset)
 training:
-  num_epochs: 30
+  num_epochs: 100  # INCREASED from 30 to allow more training with 5x data
   batch_size: 4
   learning_rate: 0.001
   optimizer: "adam"
   loss_function: "mse"
   validation_split: 0.2
-  early_stopping_patience: 3  # Reduced from 5 - stop sooner when barely improving
-  early_stopping_min_delta: 0.001  # Increased from 0.0001 - require meaningful improvement
+  early_stopping_patience: 7  # INCREASED from 3 - more patience with larger dataset
+  early_stopping_min_delta: 0.0005  # REDUCED from 0.001 - smaller improvements matter with more data
   early_stopping_monitor: "val_loss"
   scheduler: "reduce_on_plateau"
   momentum: 0.9
   weight_decay: 1e-5
-  save_dir: "models/run_2_fixed_cwt"
-  
-# Manifold configuration (same as Run 1)
+  save_dir: "models/run_3_5000_samples"
+
+# Manifold configuration (same as Run 2)
 manifold:
   k_neighbors: 32
   tangent_dim: 8
   metric: "euclidean"
 
-# Evaluation configuration (same as Run 1)
+# Evaluation configuration (same as Run 2)
 evaluation:
   scoring_mode: "ae_plus_manifold"
   alpha_ae_range: [0.5, 1.0, 2.0, 5.0, 10.0]
@@ -83,7 +84,7 @@ evaluation:
 
 # Pipeline metadata
 pipeline:
-  run_name: 'run_2_fixed_cwt'
-  description: 'Fixed CWT parameters: n_scales=140, target_height=100'
-  version: '2.0.0'
+  run_name: 'run_3_5000_samples'
+  description: 'Run 3: 5000 training samples (5x Run 2) with fixed CWT parameters'
+  version: '3.0.0'
 

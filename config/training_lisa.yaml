@@ -11,7 +11,7 @@
 
 # Model configuration
 model:
-  type: 'cwt_lstm'            # Model architecture
+  type: 'cwt_ae'            # Model architecture
   input_height: 64            # LISA CWT frequency bins (vs LIGO: 8)
   input_width: 3600           # LISA CWT time samples (vs LIGO: 4096)
   latent_dim: 32              # Latent space dimension (same as LIGO)

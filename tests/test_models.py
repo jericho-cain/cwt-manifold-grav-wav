@@ -1,7 +1,7 @@
 """
 Tests for LISA autoencoder models.
 
-Tests the CWT-LSTM autoencoder architecture adapted for LISA data.
+Tests the CWT autoencoder architecture adapted for LISA data.
 """
 
 import pytest
@@ -11,7 +11,7 @@ from pathlib import Path
 import tempfile
 
 from src.models.cwtlstm import (
-    CWT_LSTM_Autoencoder,
+    CWTAutoencoder,
     SimpleCWTAutoencoder,
     create_model,
     save_model,
@@ -19,12 +19,12 @@ from src.models.cwtlstm import (
 )
 
 
-class TestCWTLSTMAutoencoder:
-    """Test CWT-LSTM autoencoder."""
+class TestCWTAutoencoder:
+    """Test CWT autoencoder."""
     
     def test_model_creation_lisa_dimensions(self):
         """Test creating model with LISA dimensions."""
-        model = CWT_LSTM_Autoencoder(
+        model = CWTAutoencoder(
             input_height=64,
             input_width=3600,
             latent_dim=32
@@ -36,7 +36,7 @@ class TestCWTLSTMAutoencoder:
     
     def test_forward_pass_lisa(self):
         """Test forward pass with LISA-sized input."""
-        model = CWT_LSTM_Autoencoder(
+        model = CWTAutoencoder(
             input_height=64,
             input_width=3600,
             latent_dim=32
@@ -53,7 +53,7 @@ class TestCWTLSTMAutoencoder:
     
     def test_encode_decode_lisa(self):
         """Test encode and decode separately."""
-        model = CWT_LSTM_Autoencoder(
+        model = CWTAutoencoder(
             input_height=64,
             input_width=3600,
             latent_dim=32
@@ -79,7 +79,7 @@ class TestCWTLSTMAutoencoder:
         ]
         
         for height, width in dimensions:
-            model = CWT_LSTM_Autoencoder(
+            model = CWTAutoencoder(
                 input_height=height,
                 input_width=width,
                 latent_dim=32
@@ -93,7 +93,7 @@ class TestCWTLSTMAutoencoder:
     
     def test_model_info(self):
         """Test get_model_info returns correct information."""
-        model = CWT_LSTM_Autoencoder(
+        model = CWTAutoencoder(
             input_height=64,
             input_width=3600,
             latent_dim=32
@@ -110,7 +110,7 @@ class TestCWTLSTMAutoencoder:
     
     def test_batch_processing(self):
         """Test model handles different batch sizes."""
-        model = CWT_LSTM_Autoencoder(
+        model = CWTAutoencoder(
             input_height=64,
             input_width=3600,
             latent_dim=32
@@ -156,16 +156,16 @@ class TestSimpleCWTAutoencoder:
 class TestModelFactory:
     """Test model factory function."""
     
-    def test_create_cwt_lstm_model(self):
-        """Test creating CWT-LSTM model via factory."""
+    def test_create_cwt_ae_model(self):
+        """Test creating CWT autoencoder model via factory."""
         model = create_model(
-            'cwt_lstm',
+            'cwt_ae',
             input_height=64,
             input_width=3600,
             latent_dim=32
         )
         
-        assert isinstance(model, CWT_LSTM_Autoencoder)
+        assert isinstance(model, CWTAutoencoder)
         assert model.input_height == 64
         assert model.input_width == 3600
     
@@ -199,7 +199,7 @@ class TestModelSaveLoad:
         """Test saving and loading model."""
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create and save model
-            model = CWT_LSTM_Autoencoder(
+            model = CWTAutoencoder(
                 input_height=64,
                 input_width=3600,
                 latent_dim=32
@@ -216,7 +216,7 @@ class TestModelSaveLoad:
             # Load model
             loaded_model, loaded_metadata = load_model(
                 save_path,
-                CWT_LSTM_Autoencoder,
+                CWTAutoencoder,
                 latent_dim=32
             )
             
@@ -230,7 +230,7 @@ class TestModelSaveLoad:
         """Test that saving and loading preserves model weights."""
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create model
-            model = CWT_LSTM_Autoencoder(
+            model = CWTAutoencoder(
                 input_height=64,
                 input_width=3600,
                 latent_dim=32
@@ -244,7 +244,7 @@ class TestModelSaveLoad:
             # Save and load
             save_path = Path(tmpdir) / 'test_model.pth'
             save_model(model, save_path)
-            loaded_model, _ = load_model(save_path, CWT_LSTM_Autoencoder, latent_dim=32)
+                loaded_model, _ = load_model(save_path, CWTAutoencoder, latent_dim=32)
             
             # Get output from loaded model
             with torch.no_grad():
@@ -258,7 +258,7 @@ class TestModelSaveLoad:
         with pytest.raises(FileNotFoundError):
             load_model(
                 Path('/nonexistent/path/model.pth'),
-                CWT_LSTM_Autoencoder
+                CWTAutoencoder
             )
 
 
@@ -267,7 +267,7 @@ class TestModelGradients:
     
     def test_model_has_gradients(self):
         """Test model parameters have gradients."""
-        model = CWT_LSTM_Autoencoder(
+        model = CWTAutoencoder(
             input_height=64,
             input_width=3600,
             latent_dim=32
@@ -287,7 +287,7 @@ class TestModelGradients:
     
     def test_model_training_step(self):
         """Test a single training step."""
-        model = CWT_LSTM_Autoencoder(
+        model = CWTAutoencoder(
             input_height=64,
             input_width=3600,
             latent_dim=32
@@ -316,7 +316,7 @@ class TestModelMemory:
     
     def test_model_size_reasonable(self):
         """Test model size is reasonable for LISA data."""
-        model = CWT_LSTM_Autoencoder(
+        model = CWTAutoencoder(
             input_height=64,
             input_width=3600,
             latent_dim=32
@@ -329,7 +329,7 @@ class TestModelMemory:
     
     def test_forward_pass_memory(self):
         """Test forward pass doesn't explode memory."""
-        model = CWT_LSTM_Autoencoder(
+        model = CWTAutoencoder(
             input_height=64,
             input_width=3600,
             latent_dim=32

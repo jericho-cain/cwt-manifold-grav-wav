@@ -45,7 +45,7 @@ preprocessing:
 
 # Model configuration
 model:
-  type: "cwt_lstm"
+  type: "cwt_ae"
   input_height: 64
   input_width: 3600
   latent_dim: 32

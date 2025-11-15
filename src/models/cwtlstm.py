@@ -1,7 +1,7 @@
 """
-CWT-LSTM Autoencoder for LISA Gravitational Wave Detection
+CWT Autoencoder for LISA Gravitational Wave Detection
 
-This module implements a LSTM autoencoder adapted from LIGO work that operates on
+This module implements a CNN-based autoencoder adapted from LIGO work that operates on
 Continuous Wavelet Transform (CWT) scalograms for unsupervised anomaly detection
 in LISA gravitational wave data.
 
@@ -29,12 +29,12 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 
-class CWT_LSTM_Autoencoder(nn.Module):
+class CWTAutoencoder(nn.Module):
     """
-    LSTM Autoencoder for LISA gravitational wave detection using CWT scalograms.
+    CNN-based Autoencoder for LISA gravitational wave detection using CWT scalograms.
     
-    A hybrid neural network architecture that combines 2D convolutional layers
-    for spatial feature extraction with linear layers for temporal modeling.
+    A neural network architecture that combines 2D convolutional layers
+    for spatial feature extraction with linear layers for encoding/decoding.
     Designed for unsupervised anomaly detection in LISA data.
     
     The model learns to reconstruct typical LISA background (confusion noise from
@@ -76,7 +76,7 @@ class CWT_LSTM_Autoencoder(nn.Module):
     Examples
     --------
     >>> # LISA dimensions
-    >>> model = CWT_LSTM_Autoencoder(input_height=64, input_width=3600, latent_dim=32)
+    >>> model = CWTAutoencoder(input_height=64, input_width=3600, latent_dim=32)
     >>> x = torch.randn(1, 1, 64, 3600)  # Batch of LISA CWT scalograms
     >>> reconstructed, latent = model(x)
     >>> print(f"Reconstructed shape: {reconstructed.shape}")
@@ -232,7 +232,7 @@ class CWT_LSTM_Autoencoder(nn.Module):
             'total_parameters': total_params,
             'trainable_parameters': trainable_params,
             'model_size_mb': total_params * 4 / (1024 * 1024),  # Assuming float32
-            'architecture': 'CWT-LSTM Autoencoder (LISA)'
+            'architecture': 'CWT Autoencoder (LISA)'
         }
 
 
@@ -240,7 +240,7 @@ class SimpleCWTAutoencoder(nn.Module):
     """
     Simplified CWT Autoencoder for LISA gravitational wave detection.
     
-    A streamlined version of the CWT-LSTM autoencoder that uses only
+    A streamlined version of the CWT autoencoder that uses only
     convolutional layers for easier training and understanding. This model
     is more stable to train and provides a good baseline for comparison.
     
@@ -382,7 +382,7 @@ def create_model(
     Parameters
     ----------
     model_type : str
-        Type of model to create ('cwt_lstm' or 'simple_cwt')
+        Type of model to create ('cwt_ae' or 'simple_cwt')
     input_height : int
         Height of input CWT scalograms
     input_width : int
@@ -403,11 +403,11 @@ def create_model(
     Examples
     --------
     >>> # LISA model
-    >>> model = create_model('cwt_lstm', input_height=64, input_width=3600, latent_dim=32)
+    >>> model = create_model('cwt_ae', input_height=64, input_width=3600, latent_dim=32)
     >>> print(model.get_model_info())
     """
-    if model_type.lower() == 'cwt_lstm':
-        return CWT_LSTM_Autoencoder(
+    if model_type.lower() == 'cwt_ae' or model_type.lower() == 'cwt_lstm':  # Backward compatibility
+        return CWTAutoencoder(
             input_height=input_height,
             input_width=input_width,
             **kwargs
@@ -419,7 +419,7 @@ def create_model(
             **kwargs
         )
     else:
-        raise ValueError(f"Unsupported model type: {model_type}. Supported types: 'cwt_lstm', 'simple_cwt'")
+        raise ValueError(f"Unsupported model type: {model_type}. Supported types: 'cwt_ae', 'simple_cwt'")
 
 
 def save_model(model: nn.Module, save_path: Path, metadata: Optional[Dict[str, Any]] = None) -> None:

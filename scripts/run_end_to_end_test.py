@@ -423,7 +423,7 @@ def main():
         else:
             logger.info("Skipping training (--skip-training), loading trained model...")
             from src.training.trainer import LISAAutoencoderTrainer
-            from src.models import load_model, CWT_LSTM_Autoencoder
+            from src.models import load_model, CWTAutoencoder
             
             trainer = LISAAutoencoderTrainer(config)
             
@@ -434,7 +434,7 @@ def main():
             
             trainer.model, metadata = load_model(
                 model_path,
-                CWT_LSTM_Autoencoder,
+                CWTAutoencoder,
                 latent_dim=config['model']['latent_dim']
             )
             trainer.model.to(trainer.device)

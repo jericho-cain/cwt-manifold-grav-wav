@@ -6,7 +6,7 @@ representations of LISA time-frequency data (CWT scalograms).
 """
 
 from src.models.cwtlstm import (
-    CWT_LSTM_Autoencoder,
+    CWTAutoencoder,
     SimpleCWTAutoencoder,
     create_model,
     save_model,
@@ -14,7 +14,7 @@ from src.models.cwtlstm import (
 )
 
 __all__ = [
-    "CWT_LSTM_Autoencoder",
+    "CWTAutoencoder",
     "SimpleCWTAutoencoder",
     "create_model",
     "save_model",
