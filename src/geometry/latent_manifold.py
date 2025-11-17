@@ -9,8 +9,8 @@ For LISA:
 - Manifold captures "typical" LISA background structure
 - Resolvable sources (MBHBs, EMRIs) appear off-manifold
 
-Adapted from LIGO manifold learning work.
-Date: November 2024
+Author: Jericho Cain
+Date: November 2025
 """
 
 from dataclasses import dataclass

@@ -1,22 +1,22 @@
 """
 CWT Autoencoder for LISA Gravitational Wave Detection
 
-This module implements a CNN-based autoencoder adapted from LIGO work that operates on
+This module implements a CNN-based autoencoder that operates on
 Continuous Wavelet Transform (CWT) scalograms for unsupervised anomaly detection
 in LISA gravitational wave data.
 
 The model learns to reconstruct typical LISA background (confusion noise) and identifies
 anomalies (resolvable sources like MBHBs, EMRIs) through high reconstruction error.
 
-Key adaptations for LISA:
-- Input dimensions: (64, 3600) vs LIGO (8, 4096)
+Key features:
+- Input dimensions: (64, 3600)
 - Trains on confusion background (noise + unresolved GBs)
 - Detects resolvable sources as anomalies
 
 Architecture is dimension-agnostic thanks to adaptive pooling.
 
-Adapted from LIGO autoencoder work.
-Date: November 2024
+Author: Jericho Cain
+Date: November 2025
 """
 
 import torch
