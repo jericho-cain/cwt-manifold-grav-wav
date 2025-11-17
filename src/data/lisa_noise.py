@@ -10,7 +10,7 @@ References:
 """
 
 import numpy as np
-from typing import Optional
+from typing import Optional, Tuple
 
 
 class LISANoise:
@@ -96,7 +96,7 @@ class LISANoise:
         duration: float,
         sampling_rate: float,
         seed: Optional[int] = None,
-    ) -> tuple[np.ndarray, np.ndarray]:
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """
         Generate time-domain LISA noise.
         
