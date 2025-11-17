@@ -88,3 +88,7 @@ legacy/
 # Development documentation (internal notes, not for public repo)
 dev_docs/
 
+# Documentation (keep only QUICK_START.md in repo)
+docs/*.md
+!docs/QUICK_START.md
+

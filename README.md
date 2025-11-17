@@ -78,7 +78,31 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Workflow
+## Replicating Paper Results (Run 3)
+
+The paper is based on **Run 3**, which uses 5000 training samples with optimized CWT parameters. To replicate the paper's results:
+
+```bash
+# Run the complete pipeline (data generation, training, manifold construction, evaluation)
+python scripts/run_end_to_end_test.py --config config/run_3_5000_samples.yaml
+```
+
+This will:
+1. Generate 5000 training background segments and 600 test segments (200 background + 400 signals)
+2. Preprocess data with CWT (140 scales, 100×3600 output dimensions)
+3. Train the autoencoder for up to 100 epochs (with early stopping)
+4. Build the k-NN manifold from training latents
+5. Evaluate performance with grid search over α and β coefficients
+6. Save results to `results/run_3_5000_samples/`
+
+**Expected results** (from paper):
+- Best configuration: α=0.5, β=2.0
+- AUC: 0.752 (vs 0.559 for AE-only baseline)
+- Precision: 0.81, Recall: 0.61
+
+**Note**: This is a long-running process (~14+ hours). The script will save checkpoints and can be monitored via logs.
+
+## General Workflow
 
 ### 1. Generate Realistic LISA Data
 ```bash
@@ -86,26 +110,28 @@ python scripts/data_generation/generate_lisa_data.py --config config/data_genera
 ```
 
 Creates:
-- **Training**: 1000 segments of background (noise + 50 unresolved GBs each)
-- **Test**: 200 background + 400 with resolvable sources (MBHBs, EMRIs, bright GBs)
+- **Training**: Background segments (noise + unresolved GBs)
+- **Test**: Background + resolvable sources (MBHBs, EMRIs, bright GBs)
 
 ### 2. Train Autoencoder on Background
 ```bash
-python scripts/training/train_autoencoder.py --config config/training.yaml
+python scripts/training/train_lisa_ae.py --config config/training_lisa.yaml
 ```
 
 Learns to reconstruct typical LISA background (confusion noise).
 
 ### 3. Build Manifold from Training Background
+The manifold is automatically built during the end-to-end pipeline. To build separately:
 ```bash
-python scripts/geometry/build_manifold.py --model models/best_model.pth
+python scripts/run_end_to_end_test.py --config config/run_3_5000_samples.yaml --skip-data --skip-training
 ```
 
 Constructs k-NN manifold in latent space representing confusion structure.
 
 ### 4. Evaluate: Can We Detect Resolvable Sources?
+Evaluation is included in the end-to-end pipeline. To evaluate separately:
 ```bash
-python scripts/evaluation/evaluate_manifold.py --config config/evaluation.yaml
+python scripts/run_end_to_end_test.py --config config/run_3_5000_samples.yaml --skip-data --skip-training --skip-manifold
 ```
 
 Tests if manifold geometry (β) helps distinguish resolvable sources from background.
@@ -145,7 +171,7 @@ This is fundamentally different from LIGO:
 ✅ **Phase 1: Data Generation** (Complete)
 - LISA noise model implemented
 - Waveform generators (MBHB, EMRI, GB)
-- Confusion noise generation (50 unresolved GBs)
+- Confusion noise generation (1000 unresolved GBs per segment)
 - Dataset pipeline with HDF5 storage
 - **Tests**: 74 passing (58 unit + 16 integration)
 
@@ -154,31 +180,61 @@ This is fundamentally different from LIGO:
 - Frequency range: 0.1-100 mHz (vs LIGO 20-512 Hz)
 - Global normalization (prevents batch effects)
 - Log transform + per-segment normalization
+- Optimized parameters: 140 scales, 100×3600 output
 - **Tests**: 11 passing
 
-⏳ **Phase 3: Autoencoder Training** (Next - ~2 weeks)
-- Migrate autoencoder from LIGO repo → ✅ Legacy code reviewed
-- Preprocess LISA dataset to CWT format
-- Train on confusion background
-- Build k-NN manifold in latent space
-- Grid search α, β coefficients
-- **Measure β for LISA!**
+✅ **Phase 3: Autoencoder Training** (Complete)
+- CNN-based autoencoder migrated from LIGO repo
+- Trained on confusion background (5000 samples)
+- 32-dimensional latent space
+- **Results**: Best model achieves low reconstruction error on background
 
-⏳ **Phase 4: Manifold Geometry**
-- Build k-NN manifold in latent space
-- Extract tangent space geometry
-- Compute off-manifold scores
+✅ **Phase 4: Manifold Geometry** (Complete)
+- k-NN manifold built in latent space (k=32)
+- Tangent space estimation (D=8 intrinsic dimension)
+- Off-manifold distance computation
+- **Results**: Signals show clear geometric separation from background
 
-⏳ **Phase 5: Evaluation**
-- Compare AE vs AE+manifold (β coefficient)
-- ROC curves, confusion matrices
-- Statistical significance testing
+✅ **Phase 5: Evaluation** (Complete)
+- Grid search over α, β coefficients
+- **Key Finding**: β=2.0 optimal (manifold geometry significantly helps!)
+- AUC: 0.752 (vs 0.559 for AE-only)
+- Precision: 0.81, Recall: 0.61
+- **35% relative improvement** over baseline
 
 ## License
 
 MIT
 
+## Visualization
+
+To generate figures from the paper:
+
+```bash
+# Generate latent space manifold visualizations (2D and 3D)
+python scripts/analysis/visualize_manifold_results.py \
+    --config config/run_3_5000_samples.yaml \
+    --model models/run_3_5000_samples/best_model.pth \
+    --manifold models/run_3_5000_samples/manifold.npz \
+    --test-data data/raw/run_3_5000_samples/test.h5 \
+    --output-dir results/figures/run_3 \
+    --dims 2
+
+# Generate ROC and Precision-Recall curves
+python scripts/analysis/plot_roc_pr_curves.py \
+    --config config/run_3_5000_samples.yaml \
+    --model models/run_3_5000_samples/best_model.pth \
+    --manifold models/run_3_5000_samples/manifold.npz \
+    --test-data data/raw/run_3_5000_samples/test.h5 \
+    --output-dir results/figures/run_3 \
+    --grid-search-results results/run_3_5000_samples/grid_search_results.json
+
+# Generate architecture diagram
+python scripts/analysis/create_architecture_diagram.py \
+    --output results/figures/run_3/architecture_diagram.png
+```
+
 ## References
 
-See `docs/MANIFOLD_FINAL_SUMMARY.md` for complete LIGO experiment documentation.
+See `docs/QUICK_START.md` for detailed setup and usage instructions.
 
