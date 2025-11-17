@@ -1,7 +1,7 @@
 """
 Tests for LISA CWT preprocessing.
 
-Tests the adapted CWT implementation from LIGO legacy code.
+Tests the CWT implementation for LISA gravitational wave data.
 """
 
 import pytest

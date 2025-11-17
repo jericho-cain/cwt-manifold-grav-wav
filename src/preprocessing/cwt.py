@@ -1,15 +1,16 @@
 """
 Continuous Wavelet Transform for LISA data.
 
-Adapted from LIGO autoencoder legacy code but with LISA-specific parameters.
+LISA-specific CWT implementation with parameters optimized for gravitational wave
+detection in the LISA frequency band.
 
-Key differences from LIGO CWT:
-- Frequency range: mHz instead of Hz (0.1 mHz to 100 mHz vs 20-512 Hz)
-- Time scales: longer signals (3600s vs 32s)
-- Sampling rate: 1 Hz vs 4096 Hz
-- Normalization: From confusion background vs pure noise
+Key features:
+- Frequency range: 0.1 mHz to 100 mHz
+- Time scales: 3600s segments
+- Sampling rate: 1 Hz
+- Normalization: From confusion background
 
-Critical design choices from legacy LIGO code that we preserve:
+Critical design choices:
 1. Global normalization statistics (prevents batch effects)
 2. Log transform of magnitude scalogram
 3. Per-segment normalization after log transform
@@ -63,7 +64,7 @@ def compute_global_normalization_stats(
     """
     Compute global whitening statistics from training background files.
     
-    Adapted from LIGO legacy code. Computes mean/std from training data
+    Computes mean/std from training data
     to prevent batch effects across different segments.
     
     Parameters
@@ -130,9 +131,9 @@ def cwt_lisa(
     global_std: Optional[float] = None,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
-    LISA CWT implementation adapted from LIGO legacy code.
+    LISA CWT implementation for gravitational wave data preprocessing.
     
-    Key steps (matching legacy approach):
+    Key steps:
     1. High-pass filter at fmin
     2. Whitening (zero mean, unit variance) using global or local stats
     3. CWT with logarithmic frequency spacing
@@ -238,7 +239,7 @@ class LISACWTTransform:
     """
     Continuous Wavelet Transform for LISA gravitational wave data.
     
-    Adapted from LIGO legacy code with LISA-specific parameters.
+    LISA-specific CWT implementation for gravitational wave data preprocessing.
     
     Parameters
     ----------
@@ -374,7 +375,7 @@ def plot_cwt(
 if __name__ == "__main__":
     # Demo: Generate LISA signal and apply CWT
     print("=" * 80)
-    print("LISA CWT Demo - Adapted from LIGO Legacy Code")
+    print("LISA CWT Demo")
     print("=" * 80)
     
     # Generate synthetic MBHB chirp
@@ -441,12 +442,10 @@ if __name__ == "__main__":
         print("\n" + "=" * 80)
         print("CWT Demo Complete!")
         print("=" * 80)
-        print("\nKey Differences from LIGO:")
-        print(f"  LIGO:  20-512 Hz,      4096 Hz sampling, 32s duration")
-        print(f"  LISA:  {config.fmin*1e3:.1f}-{config.fmax*1e3:.0f} mHz, {config.sampling_rate} Hz sampling, {duration}s duration")
-        print(f"\n  Frequency ratio: {20/config.fmin:.1e}× lower")
-        print(f"  Sampling ratio:  {4096/config.sampling_rate:.0f}× slower")
-        print(f"  Duration ratio:  {duration/32:.0f}× longer")
+        print("\nLISA CWT Parameters:")
+        print(f"  Frequency range: {config.fmin*1e3:.1f}-{config.fmax*1e3:.0f} mHz")
+        print(f"  Sampling rate: {config.sampling_rate} Hz")
+        print(f"  Duration: {duration}s")
         
         print("\n(Close plot window to exit)")
         import matplotlib.pyplot as plt

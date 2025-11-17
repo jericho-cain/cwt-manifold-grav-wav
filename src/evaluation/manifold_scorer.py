@@ -14,8 +14,8 @@ For LISA:
 - beta weight for manifold geometry (on-manifold vs off-manifold)
 - Grid search over alpha, beta to find optimal combination
 
-Adapted from LIGO manifold learning work.
-Date: November 2024
+Author: Jericho Cain
+Date: November 2025
 """
 
 from dataclasses import dataclass
