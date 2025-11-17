@@ -244,7 +244,7 @@ class TestModelSaveLoad:
             # Save and load
             save_path = Path(tmpdir) / 'test_model.pth'
             save_model(model, save_path)
-                loaded_model, _ = load_model(save_path, CWTAutoencoder, latent_dim=32)
+            loaded_model, _ = load_model(save_path, CWTAutoencoder, latent_dim=32)
             
             # Get output from loaded model
             with torch.no_grad():
