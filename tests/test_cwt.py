@@ -34,9 +34,9 @@ class TestCWTLISA:
         assert np.abs(np.mean(scalogram)) < 0.1  # Close to 0
         assert np.abs(np.std(scalogram) - 1.0) < 0.2  # Close to 1
         
-        # Check frequency range
-        assert freqs.min() >= 1e-4  # At least fmin
-        assert freqs.max() <= 1e-1  # At most fmax
+        # Check frequency range (use tolerance for floating point precision)
+        assert freqs.min() >= 1e-4 - 1e-6  # At least fmin (with tolerance)
+        assert freqs.max() <= 1e-1 + 1e-6  # At most fmax (with tolerance)
     
     def test_cwt_lisa_with_chirp(self):
         """Test CWT on MBHB-like chirp."""
