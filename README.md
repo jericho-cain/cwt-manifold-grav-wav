@@ -6,6 +6,8 @@
 
 ### Testing manifold-based detection of resolvable sources in galactic confusion noise
 
+[![arXiv](https://img.shields.io/badge/arXiv-2511.12845-b31b1b.svg)](https://arxiv.org/abs/2511.12845)
+
 </div>
 
 ---
@@ -228,12 +230,15 @@ python scripts/analysis/create_architecture_diagram.py --output results/figures/
 
 If you use this code in your research, please cite our paper:
 
+**Paper**: [Manifold Learning for Source Separation in Confusion-Limited Gravitational-Wave Data](https://arxiv.org/abs/2511.12845)
+
 ```bibtex
-@article{your_paper_2024,
-  title={Manifold Learning for Source Separation in LISA Gravitational Wave Data},
-  author={...},
-  journal={arXiv preprint arXiv:XXXX.XXXXX},
-  year={2024}
+@article{cain2025manifold,
+  title={Manifold Learning for Source Separation in Confusion-Limited Gravitational-Wave Data},
+  author={Cain, Jericho},
+  journal={arXiv preprint arXiv:2511.12845},
+  year={2025},
+  url={https://arxiv.org/abs/2511.12845}
 }
 ```
 
