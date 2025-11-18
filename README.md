@@ -33,17 +33,6 @@ Unlike LIGO (sparse signals in high noise), LISA faces:
 - Compare AE reconstruction error vs. AE + manifold geometry
 - Test if geometric structure helps disentangle overlapping signals
 
-### Why This is Different from LIGO
-
-**Previous LIGO work:**
-- β=0 (manifold didn't help)
-- Signals too homogeneous, low diversity
-
-**LISA approach:**
-- High signal diversity + overlapping sources
-- Tests if manifold can separate sources, not just detect them
-- More realistic astrophysical problem
-
 ## Project Structure
 
 ```
