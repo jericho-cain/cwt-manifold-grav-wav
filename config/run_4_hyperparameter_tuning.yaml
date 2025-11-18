@@ -1,0 +1,89 @@
+# Run 4: Hyperparameter Tuning
+# 
+# Based on Run 3, but with optimized hyperparameters to address training plateau:
+# - Lower learning rate: 0.0005 (was 0.001) - allows finer convergence
+# - Larger model capacity: latent_dim=64 (was 32) - more expressive model
+# - Larger batch size: 8 (was 4) - more stable gradients
+# - Same data and preprocessing as Run 3 for direct comparison
+
+# Data configuration (same as Run 3)
+data:
+  dataset_name: "run_3_5000_samples"  # Reuse Run 3 data
+  output_dir: "data/raw"
+  
+  # Dataset sizes (same as Run 3)
+  n_train_background: 5000
+  n_test_background: 200
+  n_test_signals: 400
+  
+  # Time series parameters
+  duration: 3600  # 1 hour
+  sampling_rate: 1.0  # Hz
+  
+  # Confusion noise configuration
+  confusion_enabled: true
+  n_confusion_sources: 1000
+  confusion_snr_range: [0.1, 2.0]
+  
+  # Random seed
+  seed: 42
+
+# Preprocessing configuration (reuse Run 3 processed data)
+preprocessing:
+  output_dir: "data/processed/run_3_5000_samples"  # Reuse Run 3 preprocessing
+  
+  cwt:
+    fmin: 1.0e-4  # Hz
+    fmax: 1.0e-1  # Hz
+    n_scales: 140
+    target_height: 100
+    target_width: 3600
+    sampling_rate: 1.0  # Hz
+    wavelet: 'morl'
+    use_global_norm: true
+
+# Model configuration (INCREASED CAPACITY)
+model:
+  type: "cwt_ae"
+  input_height: 100
+  input_width: 3600
+  latent_dim: 64  # INCREASED from 32 - more expressive latent space
+  lstm_hidden: 64
+  dropout: 0.1
+
+# Training configuration (TUNED HYPERPARAMETERS)
+training:
+  num_epochs: 100
+  batch_size: 8  # INCREASED from 4 - more stable gradients
+  learning_rate: 0.0005  # REDUCED from 0.001 - finer convergence
+  optimizer: "adam"
+  loss_function: "mse"
+  validation_split: 0.2
+  early_stopping_patience: 10  # INCREASED from 7 - more patience for lower LR
+  early_stopping_min_delta: 0.0005
+  early_stopping_monitor: "val_loss"
+  scheduler: "reduce_on_plateau"
+  momentum: 0.9
+  weight_decay: 1e-5
+  save_dir: "models/run_4_hyperparameter_tuning"
+
+# Manifold configuration (same as Run 3)
+manifold:
+  k_neighbors: 32
+  tangent_dim: 8
+  metric: "euclidean"
+
+# Evaluation configuration (same as Run 3)
+evaluation:
+  scoring_mode: "ae_plus_manifold"
+  alpha_ae_range: [0.5, 1.0, 2.0, 5.0, 10.0]
+  beta_manifold_range: [0.0, 0.01, 0.05, 0.1, 0.5, 1.0, 2.0]
+  use_density: false
+  gamma_density: 0.0
+
+# Pipeline metadata
+pipeline:
+  run_name: 'run_4_hyperparameter_tuning'
+  description: 'Run 4: Hyperparameter tuning - LR=0.0005, latent_dim=64, batch_size=8'
+  version: '4.0.0'
+
